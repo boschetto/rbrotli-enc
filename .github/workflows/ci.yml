@@ -1,4 +1,4 @@
-name: Cargo Build & Test
+name: CI
 
 on:
   push:
@@ -6,13 +6,33 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
 
 jobs:
   build_and_test:
     name: rbrotli - latest
     runs-on: ubuntu-latest
+    env:
+      RUST_CHANNEL: "nightly"
     steps:
-      - uses: actions/checkout@v4
-      - run: rustup update nightly && rustup default nightly
-      - run: cargo build --verbose
-      - run: cargo test --verbose
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        run: |
+        rustup update --no-self-update ${{ env.RUST_CHANNEL }}
+        rustup default ${{ env.RUST_CHANNEL }}
+
+      - name: Test
+        run: cargo test
+
+      - name: Build
+        run: cargo build
+
+      - name: Format
+        run: cargo fmt
+
+      - name: Clippy
+        run: cargo clippy
