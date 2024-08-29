@@ -20,19 +20,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        run: |
-        rustup update --no-self-update ${{ env.RUST_CHANNEL }}
-        rustup default ${{ env.RUST_CHANNEL }}
-
-      - name: Test
-        run: cargo test
-
-      - name: Build
-        run: cargo build
+      - name: Rust toolchain
+        run: rustup show active-toolchain
 
       - name: Format
         run: cargo fmt
 
       - name: Clippy
         run: cargo clippy
+
+      - name: Build
+        run: cargo build
+
+      - name: Test
+        run: cargo test
